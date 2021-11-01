@@ -5,8 +5,10 @@ def solution(n, times):
     while left <= right:
         mid = (left + right) // 2
         total = sum((mid // t for t in times))
-        if total == n: answer = min(answer, mid) if answer != -1 else mid
-        if total >= n: right = mid - 1
-        elif total < n: left = mid + 1
+        if total >= n:
+            answer = min(answer, mid) if answer != -1 else mid
+            right = mid - 1
+        else:
+            left = mid + 1
 
     return answer if answer != -1 else mid
