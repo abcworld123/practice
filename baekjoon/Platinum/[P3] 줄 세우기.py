@@ -5,17 +5,24 @@ input = sys.stdin.readline
 def init(segtree, start, end, i):
     if start == end: segtree[i] = 1
     else:
-        mid, child = (start + end) >> 1, i << 1
-        segtree[i] = init(segtree, start, mid, child) + init(segtree, mid + 1, end, child + 1)
+        mid = (start + end) >> 1
+        segtree[i] = init(segtree, start, mid, i << 1) + init(segtree, mid + 1, end, (i << 1) + 1)
     return segtree[i]
 
 
 def get(segtree, start, end, i, target):
+    while start != end:
+        segtree[i] -= 1
+        mid, child = (start + end) >> 1, i << 1
+        if target <= segtree[child]:
+            end = mid
+            i = child
+        else:
+            start = mid + 1
+            i = child + 1
+            target -= segtree[child]
     segtree[i] -= 1
-    if start == end: return start
-    mid, child = (start + end) >> 1, i << 1
-    if target <= segtree[child]: return get(segtree, start, mid, child, target)
-    else: return get(segtree, mid + 1, end, child + 1, target - segtree[child])
+    return start
 
 
 N = int(input())

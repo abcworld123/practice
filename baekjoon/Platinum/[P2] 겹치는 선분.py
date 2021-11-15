@@ -1,5 +1,4 @@
 import sys
-from fractions import Fraction
 from collections import defaultdict
 input = sys.stdin.readline
 
@@ -9,13 +8,13 @@ lines = defaultdict(list)
 for _ in range(int(input())):
     x1, y1, x2, y2 = map(int, input().split())
     if x1 == x2:
-        key = f'inf {x1}'
+        key = ('inf', x1)
         if y1 <= y2: x1, x2 = y1, y2
         else: x1, x2 = y2, y1
     else:
-        a = Fraction(y2 - y1, x2 - x1)
+        a = (y2 - y1) / (x2 - x1)
         y0 = y1 - (a * x1)
-        key = f'{a} {y0}'
+        key = (round(a, 6), round(y0, 6))
         if x1 > x2: x1, x2 = x2, x1
     lines[key].append((x1, 1))
     lines[key].append((x2, -1))
