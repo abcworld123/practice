@@ -1,0 +1,1 @@
+print(int(''.join(sorted([*open(0)][1].split(),key=lambda x:x*10)[::-1])))
