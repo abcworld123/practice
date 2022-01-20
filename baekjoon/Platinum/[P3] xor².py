@@ -1,6 +1,47 @@
 import os, io, __pypy__
 input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
 
+def init(seg, arr):
+	for i in range(N): seg[262144 + i] = arr[i]
+	for i in range(262143, 0, -1): seg[i] = seg[i << 1] ^ seg[i << 1 | 1]
+
+def get(seg, i, x):
+	ret, cur, b = 0, 1, 131072
+	while b:
+		ib = 1 if i & b else 0
+		xb = 1 if x & b else 0
+		ch = cur << 1 | xb
+		ret ^= seg[ch] * ib
+		cur = ch ^ ib
+		b >>= 1
+	return ret
+
+def update(seg, i, x):
+	seg[i] ^= x
+	while i > 1:
+		seg[i >> 1] = seg[i] ^ seg[i ^ 1]
+		i >>= 1
+
+
+N = int(input())
+seg = [0] * 524288
+ans = __pypy__.builders.StringBuilder()
+init(seg, list(map(int, input().split())))
+
+for _ in range(int(input())):
+	cmd, *q = map(int, input().split())
+	if cmd == 1: ans.append(str(get(seg, q[1] + 1, q[2]) ^ get(seg, q[0], q[2])) + '\n')
+	else: update(seg, 262144 + q[0], q[1])
+
+os.write(1, ans.build().encode())
+
+
+######################################
+
+# 이전 버전
+import os, io, __pypy__
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
 def init(seg, arr, leaf, s, e, i):
 	if s == e:
 		if e <= N:
@@ -45,8 +86,6 @@ for _ in range(int(input())):
 	else: update(seg, leaf[q[0]], q[1])
 
 os.write(1, ans.build().encode())
-
-# 좀더 개선이 필요할 듯...
 
 
 ######################################
