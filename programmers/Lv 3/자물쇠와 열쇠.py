@@ -1,27 +1,26 @@
-def rotate(key):
-    length = len(key)
-    newkey = [[0] * length for _ in range(length)]
-    for i in range(length):
-        for j in range(length):
-            newkey[j][length - i - 1] = key[i][j]
-    return newkey
+def rotate(key, N):
+    return [[key[N - j - 1][i] for j in range(N)] for i in range(N)]
 
-def check(key, lock):
-    len_key = len(key)
-    len_lock = len(lock)
-    for i in range(1 - len_key, len_lock):
-        for j in range(1 - len_key, len_lock):
-            success = True
-            for x in range(len_lock):
-                for y in range(len_lock):
-                    key_can = key[x - i][y - j] if 0 <= x - i < len_key and 0 <= y - j < len_key else 0
-                    lock_can = lock[x][y]
-                    if key_can + lock_can != 1: success = False
-            if success: return True
-    return False
+def pp(key):
+    arr = []
+    for i in range(len(key)):
+        for j in range(len(key)):
+            if key[i][j]: arr.append((i, j))
+    return arr
 
 def solution(key, lock):
-    for i in range(4):
-        if check(key, lock): return True
-        if i < 3: key = rotate(key)
+    N, M = len(key), len(lock)
+    _n = sum(l.count(0) for l in lock)
+    lock = [[9] * (M + 2 * N - 2)] * (N - 1) + [[9] * (N - 1) + l + [9] * (N - 1) for l in lock] + [[9] * (M + 2 * N - 2)] * (N - 1)
+
+    for _ in range(4):
+        arr = pp(key)
+        for i in range(N + M - 1):
+            for j in range(N + M - 1):
+                n = _n
+                for y, x in arr:
+                    if lock[i + y][j + x] == 1: break
+                    elif lock[i + y][j + x] == 0: n -= 1
+                if n == 0: return True
+        key = rotate(key, N)
     return False
