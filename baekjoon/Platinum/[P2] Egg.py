@@ -53,3 +53,29 @@ for case in range(int(input())):
         if q[0]: update(segtree, lazy, 1, N, q[2], q[3], 1, q[0])
         else: count += summ(segtree, lazy, 1, N, q[2], q[2], 1)
     print(count)
+
+
+# 펜윅 구간-점 버전 (2배정도 빠름)
+import os, io
+input = io.BytesIO(os.read(0, os.fstat(0).st_size)).readline
+
+for _ in range(int(input())):
+    n, m = map(int, input().split())
+    qq = [(0, *map(int, input().split())) for _ in range(n)]
+    for i in range(m):
+        x1, x2, y1, y2 = map(int, input().split())
+        qq.append((1, x1, y1, y2))
+        qq.append((-1, x2, y1, y2))
+    qq.sort(key=lambda x: (x[1], -x[0]))
+    N, ans = 100001, 0
+    fw = [0] * (N + 1)
+
+    for q in qq:
+        if q[0]:
+            i, j, x = q[2] + 1, q[3] + 2, q[0]
+            while i <= N: fw[i] += x; i += i & -i
+            while j <= N: fw[j] -= x; j += j & -j
+        else:
+            i = q[2] + 1
+            while i: ans += fw[i]; i -= i & -i
+    print(ans)
